@@ -1,0 +1,106 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+import {useRef, useState, useEffect} from 'react'
+import c from 'clsx'
+import PhotoViz from './components/PhotoViz'
+import Sidebar from './components/Sidebar'
+import MomentPanel from './components/MomentPanel'
+import useStore from './store'
+import {setLayout, sendQuery, clearQuery, setXRayMode, toggleSidebar} from './actions'
+
+const searchPresets = [
+  'Messi free-kicks',
+  'last-minute winners',
+  'solo goals',
+  'penalty shootout saves'
+]
+
+export default function App() {
+  const layout = useStore.use.layout()
+  const isFetching = useStore.use.isFetching()
+  const xRayMode = useStore.use.xRayMode()
+  const caption = useStore.use.caption()
+  const isSidebarOpen = useStore.use.isSidebarOpen()
+  const highlightNodes = useStore.use.highlightNodes()
+  const [value, setValue] = useState('')
+  const [searchPresetIdx, setSearchPresetIdx] = useState(0)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setSearchPresetIdx(n => (n === searchPresets.length - 1 ? 0 : n + 1)),
+      5000
+    )
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <main>
+      <header className="appHeader">
+        <h1>Walrus Memory · World Cup 2026</h1>
+        <p>A 3D memory of the tournament's iconic moments — remembered on Walrus, forever.</p>
+      </header>
+      <PhotoViz />
+      <Sidebar />
+      <MomentPanel />
+      <footer>
+        <div className="caption">{caption && <>{caption}</>}</div>
+        <div className="input">
+          <input
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && value) {
+                sendQuery(value)
+                inputRef.current?.blur()
+              }
+            }}
+            ref={inputRef}
+            placeholder={`Search moments… “${searchPresets[searchPresetIdx]}”`}
+          />
+          <img
+            src="https://storage.googleapis.com/experiments-uploads/g2demos/photo-applet/spinner.svg"
+            className={c('spinner', {active: isFetching})}
+          />
+          <button
+            onClick={() => {
+              clearQuery()
+              setValue('')
+            }}
+            className={c('clearButton', {active: highlightNodes})}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="controls">
+          <div></div>
+          <div>
+            <button onClick={() => setLayout('sphere')} className={c({active: layout === 'sphere'})}>
+              sphere
+            </button>
+            <button onClick={() => setLayout('grid')} className={c({active: layout === 'grid'})}>
+              grid
+            </button>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" checked={xRayMode} onChange={() => setXRayMode(!xRayMode)} />
+              x-ray
+            </label>
+          </div>
+        </div>
+      </footer>
+      <button
+        onClick={toggleSidebar}
+        className={c('sidebarButton iconButton', {active: isSidebarOpen})}
+        aria-label="Toggle moment list"
+        title="Toggle moment list"
+      >
+        <span className="icon">list</span>
+      </button>
+    </main>
+  )
+}
