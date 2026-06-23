@@ -18,6 +18,9 @@ const searchPresets = [
   'penalty shootout saves'
 ]
 
+// The marketing landing page — links the app back to it (set VITE_LANDING_URL for deploy).
+const LANDING_URL = import.meta.env.VITE_LANDING_URL ?? 'http://localhost:3001'
+
 export default function App() {
   const layout = useStore.use.layout()
   const isFetching = useStore.use.isFetching()
@@ -55,7 +58,9 @@ export default function App() {
   return (
     <main>
       <header className="appHeader">
-        <h1>Walrus Memory · World Cup 2026</h1>
+        <a className="appHomeLink" href={LANDING_URL}>
+          <h1>Walrus Memory · World Cup 2026</h1>
+        </a>
         <p>A 3D memory of the tournament's iconic moments — remembered on Walrus, forever.</p>
       </header>
       <PhotoViz />

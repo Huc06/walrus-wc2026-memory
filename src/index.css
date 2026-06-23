@@ -96,15 +96,27 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* Design tokens shared with the landing page (Geist + dark palette). */
+:root {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
+  --border: #262626;
+  --ring: #3b82f6;
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
 * ::selection {
-  background: #fff;
-  color: #111;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 :root {
-  background: #111;
-  color: #fff;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -120,9 +132,9 @@ li {
 }
 
 input, textarea {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   background: none;
-  color: #fff;
+  color: var(--foreground);
   border: none;
   outline: none;
   font-size: 18px;
@@ -137,17 +149,17 @@ select {
   appearance: none;
   font-family: inherit;
   padding: 10px;
-  background: #111;
-  color: #fff;
+  background: var(--background);
+  color: var(--foreground);
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
 }
 
 button {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   background: none;
-  color: #fff;
+  color: var(--foreground);
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -333,7 +345,7 @@ footer > div button.active {
   background: rgba(8, 10, 12, 0.72);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(54, 224, 166, 0.18);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1.65;
   letter-spacing: 0;
@@ -386,6 +398,14 @@ footer > div button.active {
   font-weight: 600;
   letter-spacing: 0.5px;
 }
+.appHomeLink {
+  color: inherit;
+  text-decoration: none;
+  pointer-events: auto;
+  display: inline-block;
+  transition: opacity 0.2s;
+}
+.appHomeLink:hover { opacity: 0.7; }
 .appHeader p {
   font-size: 12px;
   opacity: 0.55;
