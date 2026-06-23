@@ -341,7 +341,7 @@ footer > div button.active {
 .walrusLog {
   position: fixed;
   left: 20px;
-  bottom: 20px;
+  bottom: 120px;
   z-index: 120;
   width: 600px;
   max-width: 48vw;
