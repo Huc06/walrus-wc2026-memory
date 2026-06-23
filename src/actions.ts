@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import {getState as get, setState as set} from './store'
-import {queryLlm} from './lib/llm'
-import {queryPrompt} from './lib/prompts'
 import {sphereLayout, gridLayout} from './lib/layout'
 import type {LayoutName, Moment, Note} from './types'
 
@@ -39,10 +37,6 @@ export const setLayout = (layout: LayoutName): void =>
     }
   })
 
-/** Build a rich text blob for a moment so the LLM has context to match on. */
-const momentText = (m: Moment): string =>
-  `${m.title}. ${m.description} (${m.player}, ${m.team}, ${m.match})`
-
 export const sendQuery = async (query: string): Promise<void> => {
   set(state => {
     state.isFetching = true
@@ -51,17 +45,26 @@ export const sendQuery = async (query: string): Promise<void> => {
     state.caption = null
   })
   try {
-    const corpus = (get().moments ?? []).map(m => ({...m, description: momentText(m)}))
-    const res = await queryLlm({prompt: queryPrompt(corpus, query)})
-    try {
-      const resJ = JSON.parse(res.replace('```json', '').replace('```', ''))
-      set(state => {
-        state.highlightNodes = resJ.filenames
-        state.caption = resJ.commentary
-      })
-    } catch (e) {
-      console.error('Failed to parse LLM response', e)
-    }
+    const moments = (get().moments ?? []).map(m => ({
+      id: m.id,
+      player: m.player,
+      team: m.team,
+      type: m.type,
+      title: m.title,
+      description: m.description
+    }))
+    const res = await fetch('/api/search', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({query, moments})
+    })
+    const data = await res.json()
+    set(state => {
+      state.highlightNodes = Array.isArray(data.filenames) ? data.filenames : []
+      state.caption = data.commentary ?? (res.ok ? '' : `(${data.error ?? 'search error'})`)
+    })
+  } catch (e) {
+    console.error('search failed', e)
   } finally {
     set(state => {
       state.isFetching = false

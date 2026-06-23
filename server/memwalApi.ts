@@ -156,6 +156,42 @@ export function memwalApi(env: Record<string, string>): Plugin {
           return json(res, 500, {error: String((e as Error)?.message ?? e)})
         }
       })
+
+      // Natural-language search over the moments, powered by OpenRouter (so it
+      // works with the same key as the agent — no separate Gemini key needed).
+      server.middlewares.use('/api/search', async (req, res) => {
+        if (!env.OPENROUTER_API_KEY) return json(res, 503, {error: 'OPENROUTER_API_KEY missing'})
+        if (req.method !== 'POST') return json(res, 405, {error: 'method not allowed'})
+        try {
+          const {query, moments} = await readBody(req)
+          if (!query || !Array.isArray(moments)) {
+            return json(res, 400, {error: 'query and moments required'})
+          }
+          const openrouter = createOpenAI({
+            baseURL: 'https://openrouter.ai/api/v1',
+            apiKey: env.OPENROUTER_API_KEY
+          })
+          const {text} = await generateText({
+            model: openrouter.chat('openai/gpt-4o-mini'),
+            system:
+              'You match a search query to World Cup 2026 football moments and reply with STRICT JSON only — no prose, no code fences.',
+            prompt:
+              'Return ONLY JSON: {"filenames":[matching moment ids],"commentary":"one short cheeky football-pundit sentence (<=20 words) about the picks"}. ' +
+              'Match by player, team, title, type or description (case-insensitive, partial names ok). If nothing matches, use filenames: [].\n\n' +
+              `Moments:\n${JSON.stringify(moments)}\n\nQuery: ${query}`
+          })
+          let parsed: {filenames: string[]; commentary: string} = {filenames: [], commentary: ''}
+          try {
+            parsed = JSON.parse(text.replace(/```json/gi, '').replace(/```/g, '').trim())
+          } catch {
+            /* leave empty result */
+          }
+          return json(res, 200, parsed)
+        } catch (e) {
+          console.error('[search]', e)
+          return json(res, 500, {error: String((e as Error)?.message ?? e)})
+        }
+      })
     }
   }
 }
