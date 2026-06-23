@@ -11,7 +11,7 @@ import PhotoNode from './PhotoNode'
 import {setTargetMoment} from '../actions'
 
 const CAMERA_HOME = new Vector3(0, 0, 185)
-const CAMERA_DISTANCE = 52
+const CAMERA_DISTANCE = 66
 const CAMERA_PAN_X = 26 // shift hero left of the right-side detail panel
 const IDLE_MS = 9000
 const AUTO_SPEED = 0.045

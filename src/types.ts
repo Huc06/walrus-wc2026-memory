@@ -18,6 +18,8 @@ export interface Moment {
   type: MomentType
   title: string
   description: string
+  /** Real photo URL (CC-licensed, hotlinked for now; Walrus blob later). */
+  image?: string
 }
 
 /** A community memory attached to a moment (public layer). */

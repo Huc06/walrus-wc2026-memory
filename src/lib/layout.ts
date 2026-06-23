@@ -16,7 +16,7 @@ import type {Vec2, Vec3} from '../types'
  */
 export const sphereLayout = (
   ids: string[],
-  spread = 0.13
+  spread = 0.17
 ): Record<string, Vec3> => {
   const n = ids.length
   const positions: Record<string, Vec3> = {}

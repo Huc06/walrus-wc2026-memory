@@ -42,12 +42,12 @@ export default function App() {
   useEffect(() => {
     const fire = () => window.dispatchEvent(new Event('resize'))
     const raf = requestAnimationFrame(fire)
-    const t1 = setTimeout(fire, 120)
-    const t2 = setTimeout(fire, 500)
+    const timers = [120, 500, 1200].map(ms => setTimeout(fire, ms))
+    window.addEventListener('load', fire)
     return () => {
       cancelAnimationFrame(raf)
-      clearTimeout(t1)
-      clearTimeout(t2)
+      timers.forEach(clearTimeout)
+      window.removeEventListener('load', fire)
     }
   }, [])
 

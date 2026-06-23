@@ -41,6 +41,15 @@ export default function MomentPanel() {
         <span className="icon">close</span>
       </button>
 
+      {moment.image && (
+        <div
+          className="momentImage"
+          style={{backgroundImage: `url("${moment.image}")`}}
+        >
+          <div className="momentImageFade" />
+        </div>
+      )}
+
       <div className="momentHero">
         <span className="momentType">{typeEmoji[moment.type] ?? '⚽'} {moment.type}</span>
         <h2>{moment.title}</h2>
