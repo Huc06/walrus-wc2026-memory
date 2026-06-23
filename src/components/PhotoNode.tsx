@@ -2,10 +2,10 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import {useMemo, useRef} from 'react'
+import {useMemo, useRef, useEffect, useState} from 'react'
 import {useLoader, useFrame} from '@react-three/fiber'
 import {Billboard, Text} from '@react-three/drei'
-import {TextureLoader, type Group, type MeshStandardMaterial} from 'three'
+import {TextureLoader, VideoTexture, type Group, type MeshStandardMaterial} from 'three'
 import {setTargetMoment} from '../actions'
 import type {Moment} from '../types'
 
@@ -84,6 +84,29 @@ export default function PhotoNode({
   const matRef = useRef<MeshStandardMaterial>(null)
   const targetOpacity = highlight ? 1 : dim ? 0.1 : 1
 
+  // Video texture: plays on the 3D card when node is highlighted
+  const [videoTex, setVideoTex] = useState<VideoTexture | null>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+
+  useEffect(() => {
+    if (highlight && moment.video?.includes('walrus')) {
+      const vid = document.createElement('video')
+      vid.src = moment.video
+      vid.crossOrigin = 'anonymous'
+      vid.loop = true
+      vid.muted = true
+      vid.playsInline = true
+      vid.play().catch(() => {})
+      videoRef.current = vid
+      const tex = new VideoTexture(vid)
+      setVideoTex(tex)
+      return () => { vid.pause(); vid.src = ''; setVideoTex(null) }
+    } else {
+      if (videoRef.current) { videoRef.current.pause(); videoRef.current.src = '' }
+      setVideoTex(null)
+    }
+  }, [highlight, moment.video])
+
   // Animate position (layout morph) + opacity (highlight/dim) by lerping
   // each frame — replaces framer-motion-3d (incompatible here).
   useFrame((_, delta) => {
@@ -122,7 +145,7 @@ export default function PhotoNode({
           <planeGeometry />
           <meshStandardMaterial
             ref={matRef}
-            map={texture}
+            map={videoTex ?? texture}
             transparent
             opacity={0}
             depthWrite={!dim}

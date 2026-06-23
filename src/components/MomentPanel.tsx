@@ -57,14 +57,27 @@ export default function MomentPanel() {
         <span className="icon">close</span>
       </button>
 
-      {moment.image && (
+      {moment.video ? (
+        <div className="videoEmbed">
+          {moment.video.includes('walrus') ? (
+            <video src={moment.video} controls autoPlay muted playsInline />
+          ) : (
+            <iframe
+              src={moment.video}
+              title="Match Highlight"
+              allowFullScreen
+              allow="autoplay; encrypted-media"
+            />
+          )}
+        </div>
+      ) : moment.image ? (
         <div
           className="momentImage"
           style={{backgroundImage: `url("${moment.image}")`}}
         >
           <div className="momentImageFade" />
         </div>
-      )}
+      ) : null}
 
       <div className="momentHero">
         <span className="momentType">{typeEmoji[moment.type] ?? '⚽'} {moment.type}</span>
@@ -80,17 +93,6 @@ export default function MomentPanel() {
       </div>
 
       <p className="momentDesc">{moment.description}</p>
-
-      {moment.video && (
-        <div className="videoEmbed">
-          <iframe
-            src={moment.video}
-            title="Match Highlight"
-            allowFullScreen
-            allow="autoplay; encrypted-media"
-          />
-        </div>
-      )}
 
       <div className="agentSection">
         <button className="askAgent" onClick={ask} disabled={roasting}>
