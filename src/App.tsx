@@ -36,6 +36,21 @@ export default function App() {
     return () => clearInterval(interval)
   }, [])
 
+  // The R3F canvas can mount at 0 size if the layout is still settling
+  // (e.g. a browser banner shifting the page), leaving it stuck at 300×150.
+  // Nudge its ResizeObserver a few times right after mount.
+  useEffect(() => {
+    const fire = () => window.dispatchEvent(new Event('resize'))
+    const raf = requestAnimationFrame(fire)
+    const t1 = setTimeout(fire, 120)
+    const t2 = setTimeout(fire, 500)
+    return () => {
+      cancelAnimationFrame(raf)
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [])
+
   return (
     <main>
       <header className="appHeader">

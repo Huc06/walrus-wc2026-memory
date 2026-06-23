@@ -13,6 +13,8 @@ import {setTargetMoment} from '../actions'
 const CAMERA_HOME = new Vector3(0, 0, 185)
 const CAMERA_DISTANCE = 52
 const CAMERA_PAN_X = 26 // shift hero left of the right-side detail panel
+const IDLE_MS = 9000
+const AUTO_SPEED = 0.045
 
 function SceneContent() {
   const moments = useStore.use.moments()
@@ -24,51 +26,35 @@ function SceneContent() {
   const resetCam = useStore.use.resetCam()
   const {camera} = useThree()
   const groupRef = useRef<Group>(null)
-  // TrackballControls instance (drei) — typed loosely to avoid a hard dep on three-stdlib types.
   const controlsRef = useRef<any>(null)
   const [isAutoRotating, setIsAutoRotating] = useState(false)
-  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const rotationVelocityRef = useRef(0)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const autoVelRef = useRef(0)
 
-  // Animation targets, lerped each frame (replaces motion's animate()).
+  // Programmatic camera move targets, lerped each frame.
   const flyCamPosRef = useRef<Vector3 | null>(null)
   const flyCtrlTargetRef = useRef<Vector3 | null>(null)
   const groupZRef = useRef(0)
 
-  const targetSpeed = 0.1
-  const acceleration = 0.5
-
-  const restartInactivityTimer = () => {
-    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current)
-    inactivityTimerRef.current = setTimeout(() => {
-      setIsAutoRotating(true)
-    }, 12000)
+  const armIdleTimer = () => {
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    idleTimerRef.current = setTimeout(() => setIsAutoRotating(true), IDLE_MS)
   }
 
   const handleInteractionStart = () => {
     setIsAutoRotating(false)
-    if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current)
-    rotationVelocityRef.current = 0
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
     flyCamPosRef.current = null
     flyCtrlTargetRef.current = null
   }
 
-  const handleInteractionEnd = () => {
-    restartInactivityTimer()
-  }
+  const handleInteractionEnd = () => armIdleTimer()
 
   // Fly to a focused node.
   useEffect(() => {
-    if (
-      targetMoment &&
-      nodePositions &&
-      camera &&
-      controlsRef.current &&
-      groupRef.current
-    ) {
+    if (targetMoment && nodePositions && camera && controlsRef.current && groupRef.current) {
       setIsAutoRotating(false)
-      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current)
-      rotationVelocityRef.current = 0
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
 
       const nodePos = nodePositions[targetMoment]
       if (!nodePos) return
@@ -92,14 +78,15 @@ function SceneContent() {
       if (offsetDirection.lengthSq() === 0) offsetDirection.set(0, 0, 1)
       offsetDirection.normalize().multiplyScalar(CAMERA_DISTANCE)
 
-      // Pan the framing left so the enlarged hero sits clear of the right-side
-      // detail panel (panel ≈ 380px). Shift both eye + target along camera-right.
-      const right = new Vector3(1, 0, 0).applyQuaternion(camera.quaternion).multiplyScalar(CAMERA_PAN_X)
+      // Pan left so the enlarged hero clears the right-side detail panel.
+      const right = new Vector3(1, 0, 0)
+        .applyQuaternion(camera.quaternion)
+        .multiplyScalar(CAMERA_PAN_X)
 
       flyCtrlTargetRef.current = targetNodeWorldVec.clone().add(right)
       flyCamPosRef.current = targetNodeWorldVec.clone().add(offsetDirection).add(right)
     } else if (!targetMoment) {
-      restartInactivityTimer()
+      armIdleTimer()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetMoment, nodePositions, camera])
@@ -117,10 +104,11 @@ function SceneContent() {
   useFrame((_, delta) => {
     const k = Math.min(1, delta * 4)
 
+    // Programmatic camera move (fly-to node / reset).
     if (flyCamPosRef.current && flyCtrlTargetRef.current && controlsRef.current) {
       camera.position.lerp(flyCamPosRef.current, k)
       controlsRef.current.target.lerp(flyCtrlTargetRef.current, k)
-      if (camera.position.distanceTo(flyCamPosRef.current) < 0.5) {
+      if (camera.position.distanceTo(flyCamPosRef.current) < 0.4) {
         camera.position.copy(flyCamPosRef.current)
         controlsRef.current.target.copy(flyCtrlTargetRef.current)
         flyCamPosRef.current = null
@@ -129,19 +117,19 @@ function SceneContent() {
     }
 
     if (groupRef.current) {
+      // Sphere / grid depth transition.
       groupRef.current.position.z +=
-        (groupZRef.current - groupRef.current.position.z) * k
-      if (!isAutoRotating) {
-        groupRef.current.rotation.x += (0 - groupRef.current.rotation.x) * k
-        groupRef.current.rotation.z += (0 - groupRef.current.rotation.z) * k
-      }
-    }
+        (groupZRef.current - groupRef.current.position.z) * 0.08
 
-    let v = rotationVelocityRef.current
-    v += ((isAutoRotating ? targetSpeed : 0) - v) * acceleration * delta
-    rotationVelocityRef.current = v
-    if (groupRef.current && Math.abs(v) > 0.0001 && layout !== 'grid') {
-      groupRef.current.rotation.y += v * delta
+      // Gentle idle auto-rotation of the cluster (eased in/out).
+      const target = isAutoRotating && layout !== 'grid' ? AUTO_SPEED : 0
+      autoVelRef.current += (target - autoVelRef.current) * Math.min(1, delta * 1.5)
+      if (Math.abs(autoVelRef.current) > 0.0001) {
+        groupRef.current.rotation.y += autoVelRef.current * delta
+      }
+      // Settle any tilt back to level.
+      groupRef.current.rotation.x += (0 - groupRef.current.rotation.x) * k
+      groupRef.current.rotation.z += (0 - groupRef.current.rotation.z) * k
     }
 
     controlsRef.current?.update()
@@ -154,8 +142,12 @@ function SceneContent() {
         ref={controlsRef}
         onStart={handleInteractionStart}
         onEnd={handleInteractionEnd}
-        minDistance={40}
-        maxDistance={1000}
+        rotateSpeed={3.2}
+        zoomSpeed={1.3}
+        dynamicDampingFactor={0.12}
+        staticMoving={false}
+        minDistance={55}
+        maxDistance={900}
         noPan
       />
       <group ref={groupRef}>

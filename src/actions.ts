@@ -6,7 +6,7 @@ import {getState as get, setState as set} from './store'
 import {queryLlm} from './lib/llm'
 import {queryPrompt} from './lib/prompts'
 import {sphereLayout, gridLayout} from './lib/layout'
-import type {LayoutName, Moment} from './types'
+import type {LayoutName, Moment, Note} from './types'
 
 export const init = async (): Promise<void> => {
   if (get().didInit) {
@@ -89,6 +89,23 @@ export const setTargetMoment = (targetMoment: string | null): void => {
     state.targetMoment = targetMoment
     state.highlightNodes = null
   })
+  if (targetMoment) {
+    loadNotes(targetMoment)
+  }
+}
+
+/** Fetch a moment's community notes from Walrus (via the memwal API). */
+export const loadNotes = async (momentId: string): Promise<void> => {
+  try {
+    const res = await fetch(`/api/notes?momentId=${encodeURIComponent(momentId)}`)
+    if (!res.ok) return
+    const {notes} = (await res.json()) as {notes: Note[]}
+    set(state => {
+      state.notes[momentId] = notes
+    })
+  } catch (e) {
+    console.warn('loadNotes failed', e)
+  }
 }
 
 // --- Community memory (Phase 1: local; Phase 2: Walrus blobs) ---
@@ -108,11 +125,20 @@ export const addNote = async ({
     state.isAddingNote = true
   })
   try {
-    const note = {
-      author: author.trim() || 'anon',
-      text: text.trim(),
-      ts: Date.now(),
-      blobId: null
+    // Publish to Walrus Memory (mainnet) via the server API, which holds the
+    // delegate key. Falls back to a local-only note if the API is unavailable.
+    let note: Note
+    try {
+      const res = await fetch('/api/notes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({momentId, author, text})
+      })
+      if (!res.ok) throw new Error(await res.text())
+      note = (await res.json()) as Note
+    } catch (e) {
+      console.warn('addNote: falling back to local note', e)
+      note = {author: author.trim() || 'anon', text: text.trim(), ts: Date.now(), blobId: null}
     }
     set(state => {
       if (!state.notes[momentId]) {
