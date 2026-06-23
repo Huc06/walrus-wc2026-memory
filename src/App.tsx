@@ -28,6 +28,7 @@ export default function App() {
   const caption = useStore.use.caption()
   const isSidebarOpen = useStore.use.isSidebarOpen()
   const highlightNodes = useStore.use.highlightNodes()
+  const moments = useStore.use.moments()
   const [value, setValue] = useState('')
   const [searchPresetIdx, setSearchPresetIdx] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -61,7 +62,11 @@ export default function App() {
         <a className="appHomeLink" href={LANDING_URL}>
           <h1>Walrus Memory · World Cup 2026</h1>
         </a>
-        <p>A 3D memory of the tournament's iconic moments — remembered on Walrus, forever.</p>
+        <p>
+          {moments ? `${moments.length} moments` : 'Loading…'}
+          {moments && ` · ${moments.filter(m => m.video).length} videos on-chain`}
+          {' · remembered on Walrus, forever.'}
+        </p>
       </header>
       <PhotoViz />
       <Sidebar />
