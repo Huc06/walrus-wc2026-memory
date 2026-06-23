@@ -1,0 +1,16 @@
+{
+  "name": "Cortex",
+  "short_name": "Cortex",
+  "description": "Hyperrealistic photo and video generation with film-quality detail. Every result carefully reviewed, right from your phone.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

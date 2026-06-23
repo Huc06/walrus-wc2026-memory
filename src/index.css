@@ -335,19 +335,19 @@ footer > div button.active {
 /* --- Walrus Memory live console --- */
 .walrusLog {
   position: fixed;
-  left: 16px;
-  bottom: 16px;
+  left: 20px;
+  bottom: 20px;
   z-index: 120;
-  width: 440px;
-  max-width: 42vw;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(8, 10, 12, 0.72);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(54, 224, 166, 0.18);
+  width: 600px;
+  max-width: 48vw;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba(8, 10, 12, 0.78);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(54, 224, 166, 0.22);
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.7;
   letter-spacing: 0;
   pointer-events: none;
   user-select: none;
@@ -355,13 +355,13 @@ footer > div button.active {
 .walrusLogHead {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 10px;
+  gap: 8px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
+  letter-spacing: 1.4px;
   color: #36e0a6;
-  opacity: 0.85;
-  margin-bottom: 7px;
+  opacity: 0.9;
+  margin-bottom: 10px;
 }
 .walrusLog .logLine {
   color: rgba(220, 230, 226, 0.92);
