@@ -96,7 +96,7 @@ export default function MomentPanel() {
 
       <div className="agentSection">
         <button className="askAgent" onClick={ask} disabled={roasting}>
-          {roasting ? 'thinking…' : '🧠 Ask the pundit'}
+          {roasting ? 'thinking…' : 'Ask the pundit'}
         </button>
         {roast && <p className="agentReply">“{roast}”</p>}
       </div>
