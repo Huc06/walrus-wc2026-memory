@@ -8,6 +8,7 @@ import PhotoViz from './components/PhotoViz'
 import Sidebar from './components/Sidebar'
 import MomentPanel from './components/MomentPanel'
 import WalrusLog from './components/WalrusLog'
+import PredictCard from './components/PredictCard'
 import useStore from './store'
 import {setLayout, sendQuery, clearQuery, setXRayMode, toggleSidebar} from './actions'
 
@@ -72,6 +73,7 @@ export default function App() {
       <Sidebar />
       <MomentPanel />
       <WalrusLog />
+      <PredictCard />
       <footer>
         <div className="caption">{caption && <>{caption}</>}</div>
         <div className="input">
