@@ -24,6 +24,14 @@ export interface AppState {
   /** Community memory keyed by moment id. */
   notes: Record<string, Note[]>
   isAddingNote: boolean
+  /** Live Walrus Memory activity log (recall / store / agent). */
+  walrusLog: WalrusLogEntry[]
+}
+
+export interface WalrusLogEntry {
+  ts: number
+  msg: string
+  kind: 'recall' | 'store' | 'agent' | 'search'
 }
 
 const initialState: AppState = {
@@ -40,7 +48,8 @@ const initialState: AppState = {
   caption: null,
   resetCam: false,
   notes: {},
-  isAddingNote: false
+  isAddingNote: false,
+  walrusLog: []
 }
 
 const useStore = createSelectorFunctions(create(immer<AppState>(() => initialState)))

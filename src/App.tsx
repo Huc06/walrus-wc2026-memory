@@ -7,6 +7,7 @@ import c from 'clsx'
 import PhotoViz from './components/PhotoViz'
 import Sidebar from './components/Sidebar'
 import MomentPanel from './components/MomentPanel'
+import WalrusLog from './components/WalrusLog'
 import useStore from './store'
 import {setLayout, sendQuery, clearQuery, setXRayMode, toggleSidebar} from './actions'
 
@@ -60,6 +61,7 @@ export default function App() {
       <PhotoViz />
       <Sidebar />
       <MomentPanel />
+      <WalrusLog />
       <footer>
         <div className="caption">{caption && <>{caption}</>}</div>
         <div className="input">

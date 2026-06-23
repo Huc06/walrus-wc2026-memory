@@ -205,7 +205,7 @@ footer {
   margin: 0 auto;
 }
 footer .controls, footer input, footer .input {
-  max-width: 760px;
+  max-width: 880px;
   position: relative;
 }
 footer select {
@@ -220,8 +220,8 @@ footer input {
   backdrop-filter: blur(10px);
   background: rgba(0, 0, 0, 0.55);
   border-radius: 100px;
-  font-size: 21px;
-  padding: 17px 28px;
+  font-size: 24px;
+  padding: 21px 32px;
   width: 100%;
 }
 footer .spinner, footer .clearButton {
@@ -318,6 +318,55 @@ footer > div button.active {
 }
 .caption:empty {
   opacity: 0;
+}
+
+/* --- Walrus Memory live console --- */
+.walrusLog {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 120;
+  width: 440px;
+  max-width: 42vw;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(8, 10, 12, 0.72);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(54, 224, 166, 0.18);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11.5px;
+  line-height: 1.65;
+  letter-spacing: 0;
+  pointer-events: none;
+  user-select: none;
+}
+.walrusLogHead {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #36e0a6;
+  opacity: 0.85;
+  margin-bottom: 7px;
+}
+.walrusLog .logLine {
+  color: rgba(220, 230, 226, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: logIn 0.25s ease;
+}
+.walrusLog .logLine.idle { color: rgba(255, 255, 255, 0.3); font-style: italic; }
+.walrusLog .logTime { color: rgba(255, 255, 255, 0.35); }
+.walrusLog .logLine.recall { color: #6fe3ff; }
+.walrusLog .logLine.store { color: #36e0a6; }
+.walrusLog .logLine.agent { color: #f5b942; }
+.walrusLog .logLine.search { color: #c79bff; }
+@keyframes logIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 /* --- World Cup 2026 / Walrus Memory --- */

@@ -5,6 +5,14 @@
 import {getState as get, setState as set} from './store'
 import {sphereLayout, gridLayout} from './lib/layout'
 import type {LayoutName, Moment, Note} from './types'
+import type {WalrusLogEntry} from './store'
+
+/** Append a line to the live Walrus Memory activity log. */
+export const pushLog = (msg: string, kind: WalrusLogEntry['kind'] = 'recall'): void =>
+  set(state => {
+    state.walrusLog.push({ts: Date.now(), msg, kind})
+    if (state.walrusLog.length > 40) state.walrusLog.shift()
+  })
 
 export const init = async (): Promise<void> => {
   if (get().didInit) {
@@ -59,10 +67,12 @@ export const sendQuery = async (query: string): Promise<void> => {
       body: JSON.stringify({query, moments})
     })
     const data = await res.json()
+    const hits = Array.isArray(data.filenames) ? data.filenames : []
     set(state => {
-      state.highlightNodes = Array.isArray(data.filenames) ? data.filenames : []
+      state.highlightNodes = hits
       state.caption = data.commentary ?? (res.ok ? '' : `(${data.error ?? 'search error'})`)
     })
+    pushLog(`search ▸ "${query}" matched ${hits.length} moment(s)`, 'search')
   } catch (e) {
     console.error('search failed', e)
   } finally {
@@ -100,6 +110,7 @@ export const setTargetMoment = (targetMoment: string | null): void => {
 /** Ask the agent (OpenRouter + Walrus Memory) to react to a moment + its notes. */
 export const askAgent = async (moment: Moment): Promise<string> => {
   try {
+    pushLog(`agent ◂ withMemWal recalling memories from Walrus · ${moment.player}`, 'agent')
     const res = await fetch('/api/agent', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -111,6 +122,7 @@ export const askAgent = async (moment: Moment): Promise<string> => {
       })
     })
     const data = await res.json()
+    pushLog('agent ▸ pundit reply generated from recalled context', 'agent')
     return res.ok ? (data.text ?? '') : `(${data.error ?? 'agent error'})`
   } catch (e) {
     console.warn('askAgent failed', e)
@@ -121,12 +133,18 @@ export const askAgent = async (moment: Moment): Promise<string> => {
 /** Fetch a moment's community notes from Walrus (via the memwal API). */
 export const loadNotes = async (momentId: string): Promise<void> => {
   try {
+    pushLog(`recall ◂ querying Walrus · ns wc2026:note:${momentId}`, 'recall')
     const res = await fetch(`/api/notes?momentId=${encodeURIComponent(momentId)}`)
     if (!res.ok) return
     const {notes} = (await res.json()) as {notes: Note[]}
     set(state => {
       state.notes[momentId] = notes
     })
+    const blobs = notes.map(n => n.blobId?.slice(0, 8)).filter(Boolean).join('  ')
+    pushLog(
+      `recall ▸ ${notes.length} memory blob(s) decrypted from Walrus mainnet${blobs ? ' · ' + blobs : ''}`,
+      'recall'
+    )
   } catch (e) {
     console.warn('loadNotes failed', e)
   }
@@ -160,6 +178,10 @@ export const addNote = async ({
       })
       if (!res.ok) throw new Error(await res.text())
       note = (await res.json()) as Note
+      pushLog(
+        `store ▸ note encrypted + uploaded to Walrus mainnet${note.blobId ? ' · blob ' + note.blobId.slice(0, 10) : ''}`,
+        'store'
+      )
     } catch (e) {
       console.warn('addNote: falling back to local note', e)
       note = {author: author.trim() || 'anon', text: text.trim(), ts: Date.now(), blobId: null}
