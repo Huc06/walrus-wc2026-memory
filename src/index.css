@@ -455,6 +455,31 @@ footer > div button.active {
   padding: 22px 28px 4px;
 }
 
+.agentSection { padding: 4px 28px 8px; }
+.askAgent {
+  display: inline-flex;
+  padding: 9px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--team) 60%, transparent);
+  transition: background 0.2s;
+}
+.askAgent:hover:not([disabled]) { background: rgba(255, 255, 255, 0.14); }
+.agentReply {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--team) 12%, rgba(255, 255, 255, 0.03));
+  border: 1px solid color-mix(in srgb, var(--team) 30%, transparent);
+  font-size: 14px;
+  line-height: 1.55;
+  font-style: italic;
+  color: #f0f0f0;
+}
+
 .notesSection { padding: 8px 28px 24px; }
 .notesSection h3 {
   font-size: 12px;
@@ -488,16 +513,21 @@ footer > div button.active {
   background: rgba(255, 255, 255, 0.04);
   border-radius: 12px;
   padding: 12px 14px;
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.5;
   width: 100%;
   transition: border-color 0.2s, background 0.2s;
+}
+.addNote textarea {
+  min-height: 140px;
+  resize: vertical;
 }
 .addNote input:focus,
 .addNote textarea:focus {
   border-color: color-mix(in srgb, var(--team) 70%, transparent);
   background: rgba(255, 255, 255, 0.06);
 }
-.addNote .authorInput { font-size: 13px; }
+.addNote .authorInput { font-size: 13px; min-height: 0; }
 .postNote {
   align-self: flex-start;
   padding: 11px 20px;

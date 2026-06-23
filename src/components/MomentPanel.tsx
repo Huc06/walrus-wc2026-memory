@@ -2,9 +2,9 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import useStore from '../store'
-import {setTargetMoment, addNote} from '../actions'
+import {setTargetMoment, addNote, askAgent} from '../actions'
 
 const timeAgo = (ts: number): string => {
   const s = Math.floor((Date.now() - ts) / 1000)
@@ -21,6 +21,14 @@ export default function MomentPanel() {
   const isAddingNote = useStore.use.isAddingNote()
   const [author, setAuthor] = useState('')
   const [text, setText] = useState('')
+  const [roast, setRoast] = useState('')
+  const [roasting, setRoasting] = useState(false)
+
+  // Clear the agent's take when switching moments.
+  useEffect(() => {
+    setRoast('')
+    setRoasting(false)
+  }, [targetMoment])
 
   const moment = moments?.find(m => m.id === targetMoment)
   if (!moment) return null
@@ -31,6 +39,14 @@ export default function MomentPanel() {
     if (!text.trim()) return
     await addNote({momentId: moment.id, author, text})
     setText('')
+  }
+
+  const ask = async () => {
+    setRoasting(true)
+    setRoast('')
+    const reply = await askAgent(moment)
+    setRoast(reply || 'The pundit is speechless (check the agent config).')
+    setRoasting(false)
   }
 
   const typeEmoji: Record<string, string> = {goal: '⚽', save: '🧤', skill: '✨'}
@@ -65,6 +81,13 @@ export default function MomentPanel() {
 
       <p className="momentDesc">{moment.description}</p>
 
+      <div className="agentSection">
+        <button className="askAgent" onClick={ask} disabled={roasting}>
+          {roasting ? 'thinking…' : '🧠 Ask the pundit'}
+        </button>
+        {roast && <p className="agentReply">“{roast}”</p>}
+      </div>
+
       <div className="notesSection">
         <h3>
           Community memory <span className="noteCount">{momentNotes.length}</span>
@@ -81,7 +104,7 @@ export default function MomentPanel() {
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder="I remember this moment… add your note"
-            rows={2}
+            rows={5}
           />
           <button
             className="postNote"

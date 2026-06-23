@@ -94,6 +94,27 @@ export const setTargetMoment = (targetMoment: string | null): void => {
   }
 }
 
+/** Ask the agent (OpenRouter + Walrus Memory) to react to a moment + its notes. */
+export const askAgent = async (moment: Moment): Promise<string> => {
+  try {
+    const res = await fetch('/api/agent', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        momentId: moment.id,
+        title: moment.title,
+        player: moment.player,
+        description: moment.description
+      })
+    })
+    const data = await res.json()
+    return res.ok ? (data.text ?? '') : `(${data.error ?? 'agent error'})`
+  } catch (e) {
+    console.warn('askAgent failed', e)
+    return ''
+  }
+}
+
 /** Fetch a moment's community notes from Walrus (via the memwal API). */
 export const loadNotes = async (momentId: string): Promise<void> => {
   try {

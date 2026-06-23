@@ -13,6 +13,9 @@
  */
 import type {Connect, Plugin} from 'vite'
 import {MemWal} from '@mysten-incubation/memwal'
+import {withMemWal} from '@mysten-incubation/memwal/ai'
+import {createOpenAI} from '@ai-sdk/openai'
+import {generateText} from 'ai'
 
 const SERVER_URL = 'https://relayer.memory.walrus.xyz'
 // Namespace is versioned: bumping it orphans old test data (memwal has no
@@ -105,6 +108,51 @@ export function memwalApi(env: Record<string, string>): Plugin {
           return json(res, 405, {error: 'method not allowed'})
         } catch (e) {
           console.error('[memwal-api]', e)
+          return json(res, 500, {error: String((e as Error)?.message ?? e)})
+        }
+      })
+
+      // The "agent" — a cheeky pundit that reacts to a moment's community
+      // memories. withMemWal auto-recalls the moment's notes from Walrus and
+      // injects them as context (autoSave off so it never pollutes memory).
+      server.middlewares.use('/api/agent', async (req, res) => {
+        if (!enabled) return json(res, 503, {error: 'memwal not configured'})
+        if (!env.OPENROUTER_API_KEY) return json(res, 503, {error: 'OPENROUTER_API_KEY missing'})
+        if (req.method !== 'POST') return json(res, 405, {error: 'method not allowed'})
+        try {
+          const {momentId, title, player, description} = await readBody(req)
+          if (!momentId) return json(res, 400, {error: 'momentId required'})
+
+          const openrouter = createOpenAI({
+            baseURL: 'https://openrouter.ai/api/v1',
+            apiKey: env.OPENROUTER_API_KEY
+          })
+          const model = withMemWal(openrouter.chat('openai/gpt-4o-mini'), {
+            key: env.DEFAULT_DELEGATE_KEY,
+            accountId: env.ACCOUNT_ID,
+            serverUrl: env.MEMWAL_SERVER_URL || SERVER_URL,
+            namespace: nsFor(momentId),
+            autoSave: false,
+            maxMemories: 30,
+            minRelevance: 0
+          })
+
+          const {text} = await generateText({
+            model,
+            system:
+              'You are a witty, slightly cheeky football pundit with a long memory. ' +
+              "You react to fans' community notes about iconic World Cup 2026 moments. " +
+              'Be playful, vivid and concise — 2 to 3 sentences max. If fans made bold ' +
+              'predictions or hot takes, hype or gently roast them. Never invent fake facts; ' +
+              "if there are no fan notes yet, riff on the moment itself and invite people to add memories.",
+            prompt:
+              `React to what the community remembers about this moment: "${title}" — ` +
+              `${player}. Context: ${description}`
+          })
+
+          return json(res, 200, {text})
+        } catch (e) {
+          console.error('[agent]', e)
           return json(res, 500, {error: String((e as Error)?.message ?? e)})
         }
       })
