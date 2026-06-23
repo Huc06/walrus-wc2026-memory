@@ -670,3 +670,27 @@ footer > div button.active {
   display: inline-block;
   flex-shrink: 0;
 }
+.videoLink {
+  display: inline-block;
+  margin: 12px 0;
+  padding: 10px 20px;
+  background: #e63946;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.videoLink:hover { background: #c1121f; }
+.videoEmbed {
+  margin: 12px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+.videoEmbed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

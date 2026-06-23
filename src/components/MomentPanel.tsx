@@ -81,6 +81,17 @@ export default function MomentPanel() {
 
       <p className="momentDesc">{moment.description}</p>
 
+      {moment.video && (
+        <div className="videoEmbed">
+          <iframe
+            src={moment.video}
+            title="Match Highlight"
+            allowFullScreen
+            allow="autoplay; encrypted-media"
+          />
+        </div>
+      )}
+
       <div className="agentSection">
         <button className="askAgent" onClick={ask} disabled={roasting}>
           {roasting ? 'thinking…' : '🧠 Ask the pundit'}

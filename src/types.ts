@@ -20,6 +20,8 @@ export interface Moment {
   description: string
   /** Real photo URL (CC-licensed, hotlinked for now; Walrus blob later). */
   image?: string
+  /** FIFA highlight video URL. */
+  video?: string
 }
 
 /** A community memory attached to a moment (public layer). */
