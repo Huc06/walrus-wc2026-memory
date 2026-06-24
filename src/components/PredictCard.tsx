@@ -34,7 +34,7 @@ export default function PredictCard() {
   // Recall existing predictions from Walrus Memory
   useEffect(() => {
     if (!match) return
-    fetch(`/api/notes?momentId=predict_${match.home}_${match.away}`)
+    fetch(`/api/notes?momentId=predict`)
       .then(r => r.json())
       .then(d => {
         const picks = (d.notes ?? []).map((n: any) => n.text)
@@ -52,9 +52,9 @@ export default function PredictCard() {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          momentId: `predict_${match.home}_${match.away}`,
+          momentId: 'predict',
           author: 'predictor',
-          text: `${winner} wins${reason ? ' — ' + reason : ''}`
+          text: `${match.home} vs ${match.away}: ${winner} wins${reason ? ' — ' + reason : ''}`
         })
       })
       setPredictions(prev => [...prev, `${winner} wins`])

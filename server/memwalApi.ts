@@ -68,9 +68,11 @@ export function memwalApi(env: Record<string, string>): Plugin {
           if (req.method === 'GET') {
             const momentId = url.searchParams.get('momentId')
             if (!momentId) return json(res, 400, {error: 'momentId required'})
+            const ns = momentId === 'predict_all' ? 'wc2026:v2:note:predict' : nsFor(momentId)
+            const query = momentId === 'predict_all' ? 'prediction wins world cup match' : 'world cup moment fan memory note reaction'
             const rec = await getClient().recall({
-              query: 'world cup moment fan memory note reaction',
-              namespace: nsFor(momentId),
+              query,
+              namespace: ns,
               limit: 100,
               maxDistance: 5
             })

@@ -24,7 +24,8 @@ export default function Sidebar() {
   // Load prediction history from Walrus when Memory tab opens
   useEffect(() => {
     if (tab !== 'memory' || !isSidebarOpen) return
-    fetch('/api/notes?momentId=predict_history')
+    // Recall all predictions - stored under predict_* namespaces
+    fetch('/api/notes?momentId=predict')
       .then(r => r.json())
       .then(d => setPredictions(d.notes ?? []))
       .catch(() => {})

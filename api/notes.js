@@ -26,9 +26,12 @@ export default async function handler(req, res) {
       const momentId = req.query.momentId
       if (!momentId) return res.status(400).json({ error: 'momentId required' })
 
+      const ns = momentId === 'predict_all' ? 'wc2026:v2:note:predict' : nsFor(momentId)
+      const query = momentId === 'predict_all' ? 'prediction wins world cup match' : 'world cup moment fan memory note reaction'
+
       const rec = await getClient().recall({
-        query: 'world cup moment fan memory note reaction',
-        namespace: nsFor(momentId),
+        query,
+        namespace: ns,
         limit: 100,
         maxDistance: 5
       })
