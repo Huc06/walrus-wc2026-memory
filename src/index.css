@@ -839,7 +839,7 @@ footer > div button.active {
   transition: opacity 0.2s, border-color 0.2s;
 }
 .sidebarTabs button.active { opacity: 1; border-bottom-color: #36e0a6; }
-.memoryTab { padding: 0 15px; }
+.memoryTab { padding: 12px 15px 0; }
 .memoryTab h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 12px; }
 .predictionStats {
   display: flex;
