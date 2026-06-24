@@ -18,7 +18,7 @@ export const queryLlm = async ({prompt}: {prompt: string}): Promise<string> => {
         'Authorization': `Bearer ${OPENROUTER_KEY}`,
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'openai/gpt-4o-mini',
         messages: [{role: 'user', content: prompt}],
       })
     })
