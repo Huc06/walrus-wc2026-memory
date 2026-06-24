@@ -72,7 +72,7 @@ export default function PredictCard() {
 
   return (
     <div className="predictCard">
-      <div className="predictHeader">⚡ Next Match · Predict & Remember</div>
+      <div className="predictHeader">Next Match · Predict & Remember</div>
       <div className="predictMatchup">
         <div className="predictTeam">
           <span className="predictName">{match.home}</span>
