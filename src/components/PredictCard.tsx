@@ -65,6 +65,25 @@ export default function PredictCard() {
 
   if (!match) return null
 
+  if (!username) {
+    return (
+      <div className="predictCard">
+        <div className="predictHeader">Welcome to Walrus Memory</div>
+        <p style={{fontSize: 13, opacity: 0.7, margin: '12px 0'}}>Enter your name so the agent can remember you across sessions.</p>
+        <input
+          className="predictUsername"
+          placeholder="Your name"
+          autoFocus
+          onKeyDown={e => { if (e.key === 'Enter' && (e.target as HTMLInputElement).value) setUsername((e.target as HTMLInputElement).value) }}
+        />
+        <button className="predictSubmit" onClick={() => {
+          const el = document.querySelector('.predictUsername') as HTMLInputElement
+          if (el?.value) setUsername(el.value)
+        }}>Start →</button>
+      </div>
+    )
+  }
+
   const homeCount = predictions.filter(p => p.includes(match.home)).length
   const awayCount = predictions.filter(p => p.includes(match.away)).length
   const drawCount = predictions.filter(p => p.includes('Draw')).length
@@ -90,14 +109,6 @@ export default function PredictCard() {
         <div className="predictBarAway" style={{width: `${awayCount / total * 100}%`}} />
       </div>
       <div className="predictButtons">
-        {!username && (
-          <input
-            className="predictUsername"
-            placeholder="Your name"
-            onBlur={e => setUsername(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') setUsername((e.target as HTMLInputElement).value) }}
-          />
-        )}
         <button className={`predictBtn home ${pick === 'home' ? 'active' : ''}`} onClick={() => setPick('home')}>
           {match.home}
         </button>
