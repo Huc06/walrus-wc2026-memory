@@ -803,3 +803,9 @@ footer > div button.active {
   color: #36e0a6;
   padding: 8px 0;
 }
+.predictStats {
+  text-align: center;
+  font-size: 11px;
+  opacity: 0.5;
+  margin-top: 6px;
+}
