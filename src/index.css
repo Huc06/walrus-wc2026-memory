@@ -808,6 +808,15 @@ footer > div button.active {
   resize: none;
   margin-bottom: 8px;
 }
+.predictUsername {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(54,224,166,0.3);
+  background: rgba(255,255,255,0.04);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
 .predictSaved {
   text-align: center;
   font-size: 12px;

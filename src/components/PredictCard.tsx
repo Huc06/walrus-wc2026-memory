@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import {useState, useEffect} from 'react'
+import {useUsername} from '../lib/useUsername'
 
 interface Match {
   home: string
@@ -16,6 +17,7 @@ export default function PredictCard() {
   const [reason, setReason] = useState('')
   const [saved, setSaved] = useState(false)
   const [predictions, setPredictions] = useState<string[]>([])
+  const [username, setUsername] = useUsername()
 
   // Fetch next scheduled match
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function PredictCard() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           momentId: 'predict',
-          author: 'predictor',
+          author: username || 'anon',
           text: `${match.home} vs ${match.away}: ${winner} wins${reason ? ' — ' + reason : ''}`
         })
       })
@@ -88,6 +90,14 @@ export default function PredictCard() {
         <div className="predictBarAway" style={{width: `${awayCount / total * 100}%`}} />
       </div>
       <div className="predictButtons">
+        {!username && (
+          <input
+            className="predictUsername"
+            placeholder="Your name"
+            onBlur={e => setUsername(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') setUsername((e.target as HTMLInputElement).value) }}
+          />
+        )}
         <button className={`predictBtn home ${pick === 'home' ? 'active' : ''}`} onClick={() => setPick('home')}>
           {match.home}
         </button>
