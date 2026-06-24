@@ -18,19 +18,16 @@ export default function PredictCard() {
 
   // Fetch next scheduled match
   useEffect(() => {
-    fetch('https://api.football-data.org/v4/competitions/WC/matches?season=2026&status=SCHEDULED&limit=1', {
-      headers: {'X-Auth-Token': '47dc9248efe245f9afe113623d74e27c'}
-    })
+    fetch('/api/next-match')
       .then(r => r.json())
       .then(d => {
-        const m = d.matches?.[0]
-        if (m) setMatch({
-          home: m.homeTeam.name,
-          away: m.awayTeam.name,
-          date: new Date(m.utcDate).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})
+        if (d.home) setMatch({
+          home: d.home,
+          away: d.away,
+          date: new Date(d.date).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})
         })
       })
-      .catch(() => setMatch({home: 'Portugal', away: 'Uzbekistan', date: 'Next match'}))
+      .catch(() => {})
   }, [])
 
   // Recall existing predictions from Walrus Memory
