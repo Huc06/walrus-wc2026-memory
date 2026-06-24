@@ -150,7 +150,7 @@ export default function MomentPanel() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    ⛓ on Walrus
+                    🐋 on Walrus
                   </a>
                 )}
               </li>
