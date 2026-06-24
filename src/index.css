@@ -909,3 +909,17 @@ footer > div button.active {
   align-items: center;
   gap: 8px;
 }
+
+.userBadge {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(54, 224, 166, 0.12);
+  border: 1px solid rgba(54, 224, 166, 0.3);
+  color: #36e0a6;
+  font-size: 12px;
+  font-weight: 600;
+}

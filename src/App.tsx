@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar'
 import MomentPanel from './components/MomentPanel'
 import WalrusLog from './components/WalrusLog'
 import PredictCard from './components/PredictCard'
+import {useUsername} from './lib/useUsername'
 import useStore from './store'
 import {setLayout, sendQuery, clearQuery, setXRayMode, toggleSidebar} from './actions'
 
@@ -30,6 +31,7 @@ export default function App() {
   const isSidebarOpen = useStore.use.isSidebarOpen()
   const highlightNodes = useStore.use.highlightNodes()
   const moments = useStore.use.moments()
+  const [username] = useUsername()
   const [value, setValue] = useState('')
   const [searchPresetIdx, setSearchPresetIdx] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -123,6 +125,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      {username && <div className="userBadge">{username}</div>}
       <button
         onClick={toggleSidebar}
         className={c('sidebarButton iconButton', {active: isSidebarOpen})}
