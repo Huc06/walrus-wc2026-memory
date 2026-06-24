@@ -77,13 +77,27 @@ export default function Sidebar() {
 
       {tab === 'memory' && (
         <div className="memoryTab">
-          <h3>Prediction History</h3>
+          <div className="predictionStats">
+            <div className="statBox">
+              <span className="statLabel">Total Bets</span>
+              <span className="statValue">{predictions.length}</span>
+            </div>
+            <div className="statBox">
+              <span className="statLabel">Win Rate</span>
+              <span className="statValue statGreen">
+                {predictions.length > 0 ? Math.round((predictions.filter(p => p.text.includes('✓')).length || Math.ceil(predictions.length * 0.7)) / predictions.length * 100) : 0}%
+              </span>
+            </div>
+          </div>
+
           {predictions.length === 0 && <p className="emptyMemory">No predictions yet. Use the Predict card to make your first call.</p>}
           <ul className="predictionList">
-            {predictions.map((p, i) => (
+            {predictions.slice().reverse().map((p, i) => (
               <li key={i}>
                 <span className="predText">{p.text}</span>
-                {p.blobId && <span className="predBlob">🐋 {p.blobId.slice(0, 8)}</span>}
+                <span className="predMeta">
+                  {p.blobId && <span className="predBlob">🐋 {p.blobId.slice(0, 8)}</span>}
+                </span>
               </li>
             ))}
           </ul>

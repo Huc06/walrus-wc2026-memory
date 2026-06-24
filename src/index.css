@@ -841,6 +841,22 @@ footer > div button.active {
 .sidebarTabs button.active { opacity: 1; border-bottom-color: #36e0a6; }
 .memoryTab { padding: 0 15px; }
 .memoryTab h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 12px; }
+.predictionStats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.statBox {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+.statLabel { display: block; font-size: 11px; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; }
+.statValue { display: block; font-size: 22px; font-weight: 700; margin-top: 4px; }
+.statGreen { color: #36e0a6; }
 .emptyMemory { font-size: 13px; opacity: 0.4; font-style: italic; }
 .predictionList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
 .predictionList li {
@@ -850,7 +866,8 @@ footer > div button.active {
   border: 1px solid rgba(255,255,255,0.06);
 }
 .predText { font-size: 13px; line-height: 1.4; display: block; }
-.predBlob { font-size: 10px; opacity: 0.4; margin-top: 4px; display: block; }
+.predMeta { display: flex; justify-content: space-between; margin-top: 4px; }
+.predBlob { font-size: 10px; opacity: 0.4; }
 .roastSection { margin-top: 16px; }
 .roastBtn {
   width: 100%;
