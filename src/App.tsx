@@ -81,7 +81,8 @@ export default function App() {
             value={value}
             onChange={e => setValue(e.target.value)}
             onKeyDown={e => {
-              if (e.key === 'Enter' && value) {
+              if (e.nativeEvent.isComposing) return
+              if (e.key === 'Enter' && value && !isFetching) {
                 sendQuery(value)
                 inputRef.current?.blur()
               }
