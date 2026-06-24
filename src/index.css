@@ -820,3 +820,66 @@ footer > div button.active {
   opacity: 0.5;
   margin-top: 6px;
 }
+
+/* --- Sidebar Tabs + Memory --- */
+.sidebarTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #333;
+  margin-bottom: 12px;
+  padding: 0 15px;
+}
+.sidebarTabs button {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.5;
+  border-bottom: 2px solid transparent;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+.sidebarTabs button.active { opacity: 1; border-bottom-color: #36e0a6; }
+.memoryTab { padding: 0 15px; }
+.memoryTab h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 12px; }
+.emptyMemory { font-size: 13px; opacity: 0.4; font-style: italic; }
+.predictionList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.predictionList li {
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.predText { font-size: 13px; line-height: 1.4; display: block; }
+.predBlob { font-size: 10px; opacity: 0.4; margin-top: 4px; display: block; }
+.roastSection { margin-top: 16px; }
+.roastBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(54,224,166,0.4);
+  color: #36e0a6;
+  transition: background 0.2s;
+}
+.roastBtn:hover:not([disabled]) { background: rgba(54,224,166,0.1); }
+.roastText {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(54,224,166,0.08);
+  border: 1px solid rgba(54,224,166,0.2);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.5;
+}
+.memoryFooter {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 11px;
+  opacity: 0.45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
