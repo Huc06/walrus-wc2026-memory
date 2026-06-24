@@ -13,6 +13,7 @@ interface Match {
 export default function PredictCard() {
   const [match, setMatch] = useState<Match | null>(null)
   const [pick, setPick] = useState<'home' | 'draw' | 'away' | null>(null)
+  const [reason, setReason] = useState('')
   const [saved, setSaved] = useState(false)
   const [predictions, setPredictions] = useState<string[]>([])
 
@@ -53,7 +54,7 @@ export default function PredictCard() {
         body: JSON.stringify({
           momentId: `predict_${match.home}_${match.away}`,
           author: 'predictor',
-          text: `${winner} wins`
+          text: `${winner} wins${reason ? ' — ' + reason : ''}`
         })
       })
       setPredictions(prev => [...prev, `${winner} wins`])
@@ -98,9 +99,18 @@ export default function PredictCard() {
         </button>
       </div>
       {pick && !saved && (
-        <button className="predictSubmit" onClick={submit}>
-          Save to Walrus Memory →
-        </button>
+        <>
+          <textarea
+            className="predictReason"
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+            placeholder="Why? (optional — your reasoning lives on-chain)"
+            rows={2}
+          />
+          <button className="predictSubmit" onClick={submit}>
+            Save to Walrus Memory →
+          </button>
+        </>
       )}
       {saved && <div className="predictSaved">✓ Prediction stored on-chain</div>}
       {predictions.length > 0 && (
