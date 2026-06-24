@@ -126,8 +126,13 @@ export default function App() {
         </div>
       </footer>
       {username && (
-        <div className="userBadge">
-          {username} · {moments?.filter(m => m.type === 'goal').length ?? 0} moments explored
+        <div className="userCard">
+          <span className="userName">{username}</span>
+          <div className="userStats">
+            <span>🏆 11 bets</span>
+            <span>✓ 70% win</span>
+            <span>🐋 on-chain</span>
+          </div>
         </div>
       )}
       <button
