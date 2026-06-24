@@ -125,7 +125,11 @@ export default function App() {
           </div>
         </div>
       </footer>
-      {username && <div className="userBadge">{username}</div>}
+      {username && (
+        <div className="userBadge">
+          {username} · {moments?.filter(m => m.type === 'goal').length ?? 0} moments explored
+        </div>
+      )}
       <button
         onClick={toggleSidebar}
         className={c('sidebarButton iconButton', {active: isSidebarOpen})}
