@@ -89,13 +89,13 @@ export default function PredictCard() {
       </div>
       <div className="predictButtons">
         <button className={`predictBtn home ${pick === 'home' ? 'active' : ''}`} onClick={() => setPick('home')}>
-          {match.home.slice(0, 3).toUpperCase()}
+          {match.home}
         </button>
         <button className={`predictBtn draw ${pick === 'draw' ? 'active' : ''}`} onClick={() => setPick('draw')}>
           Draw
         </button>
         <button className={`predictBtn away ${pick === 'away' ? 'active' : ''}`} onClick={() => setPick('away')}>
-          {match.away.slice(0, 3).toUpperCase()}
+          {match.away}
         </button>
       </div>
       {pick && !saved && (
